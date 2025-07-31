@@ -11,6 +11,7 @@ interface ProjectCardProps {
     category: string;
     githubUrl?: string;
     liveUrl?: string;
+    featured?: boolean;
   };
   index: number;
 }
@@ -31,7 +32,11 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
       transition={{ duration: 0.6, delay: index * 0.1 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
-      className="nothing-card group relative overflow-hidden cursor-pointer"
+      className={`nothing-card group relative overflow-hidden cursor-pointer ${
+        project.featured
+          ? "ring-2 ring-accent/50 shadow-lg shadow-accent/20"
+          : ""
+      }`}
     >
       {/* Background gradient effect */}
       <motion.div
@@ -79,6 +84,17 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
               >
                 {project.title}
               </motion.h4>
+
+              {project.featured && (
+                <motion.div
+                  className="px-2 py-1 bg-accent text-accent-foreground text-[10px] font-bold rounded uppercase tracking-wider"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 0.3, delay: 0.2 }}
+                >
+                  Featured
+                </motion.div>
+              )}
 
               <motion.div
                 animate={{
@@ -141,26 +157,32 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
 
         {/* Action buttons */}
         <div className="flex gap-2 mt-4">
-          {project.githubUrl && (
-            <motion.button
-              className="flex items-center gap-1 px-3 py-1.5 bg-secondary hover:bg-accent hover:text-accent-foreground transition-all duration-300 rounded text-xs border border-border"
+          {project.githubUrl && project.githubUrl !== "#" && (
+            <motion.a
+              href={project.githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 px-3 py-1.5 bg-secondary hover:bg-accent hover:text-accent-foreground transition-all duration-300 rounded text-xs border border-border cursor-pointer"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
               <Github className="w-3 h-3" />
               Code
-            </motion.button>
+            </motion.a>
           )}
 
-          {project.liveUrl && (
-            <motion.button
-              className="flex items-center gap-1 px-3 py-1.5 bg-accent text-accent-foreground hover:bg-accent/90 transition-all duration-300 rounded text-xs"
+          {project.liveUrl && project.liveUrl !== "#" && (
+            <motion.a
+              href={project.liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 px-3 py-1.5 bg-accent text-accent-foreground hover:bg-accent/90 transition-all duration-300 rounded text-xs cursor-pointer"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
               <ExternalLink className="w-3 h-3" />
               Live
-            </motion.button>
+            </motion.a>
           )}
         </div>
       </div>

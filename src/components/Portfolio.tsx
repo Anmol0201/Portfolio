@@ -92,6 +92,23 @@ const Portfolio = () => {
 
   const projects = [
     {
+      title: "DEVCRAFT STUDIO",
+      description:
+        "Modern AI-powered portfolio with multilingual chat assistant, responsive design, and analytics integration. Features 12-language support, theme switching, and professional branding.",
+      tech: [
+        "React",
+        "TypeScript",
+        "Groq AI",
+        "Framer Motion",
+        "Tailwind CSS",
+        "Vercel Analytics",
+      ],
+      category: "Full Stack",
+      githubUrl: "https://github.com/Anmol0201/Portfolio",
+      liveUrl: "https://devcraft-studio.vercel.app/",
+      featured: true,
+    },
+    {
       title: "AGRO-ADVISOR",
       description:
         "ML-based web application using Streamlit for crop recommendation based on soil and climate parameters.",

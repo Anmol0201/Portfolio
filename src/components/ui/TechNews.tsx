@@ -30,7 +30,7 @@ const TechNews = () => {
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const isMobile = useIsMobile();
 
-  const API_KEY = import.meta.env.VITE_NEWS_API_KEY;
+  const API_KEY = import.meta.env.VITE_NEWS_API_KEY || "5f9500e25cd14e1e9671a93dde5f1ccc";
   const BASE_URL = "https://newsapi.org/v2";
 
   const categories = [
@@ -65,18 +65,33 @@ const TechNews = () => {
   const fetchNews = async () => {
     setLoading(true);
     try {
+      // Debug logging
+      console.log("API_KEY available:", !!API_KEY);
+      console.log("Environment check:", import.meta.env.MODE);
+      
+      if (!API_KEY) {
+        console.error("NewsAPI key is not available");
+        setArticles([]);
+        setLoading(false);
+        return;
+      }
+
       const query = getCategoryQuery(selectedCategory);
-      const response = await fetch(
-        `${BASE_URL}/everything?q=${encodeURIComponent(
-          query
-        )}&language=en&sortBy=publishedAt&pageSize=20&apiKey=${API_KEY}`
-      );
+      const url = `${BASE_URL}/everything?q=${encodeURIComponent(
+        query
+      )}&language=en&sortBy=publishedAt&pageSize=20&apiKey=${API_KEY}`;
+      
+      console.log("Fetching from:", url.replace(API_KEY, '[API_KEY]'));
+      
+      const response = await fetch(url);
 
       if (!response.ok) {
+        console.error(`HTTP error! status: ${response.status}`);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
+      console.log("API Response:", data.status, "Articles count:", data.articles?.length || 0);
 
       if (data.status === "ok" && data.articles) {
         const formattedArticles: NewsArticle[] = data.articles
@@ -115,12 +130,20 @@ const TechNews = () => {
         setArticles(formattedArticles);
         setLastUpdate(new Date());
       } else {
-        console.error("NewsAPI error:", data.message);
+        console.error("NewsAPI error:", data.message || "Unknown API error");
+        console.error("Full API response:", data);
         setArticles([]);
       }
     } catch (error) {
       console.error("Error fetching news:", error);
-      // Fallback to empty array on error
+      // Check if it's a network error or API key issue
+      if (error instanceof Error) {
+        if (error.message.includes('401')) {
+          console.error("API Key authentication failed");
+        } else if (error.message.includes('429')) {
+          console.error("API rate limit exceeded");
+        }
+      }
       setArticles([]);
     } finally {
       setLoading(false);

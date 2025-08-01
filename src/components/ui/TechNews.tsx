@@ -30,7 +30,8 @@ const TechNews = () => {
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const isMobile = useIsMobile();
 
-  const API_KEY = import.meta.env.VITE_NEWS_API_KEY || "5f9500e25cd14e1e9671a93dde5f1ccc";
+  const API_KEY =
+    import.meta.env.VITE_NEWS_API_KEY || "5f9500e25cd14e1e9671a93dde5f1ccc";
   const BASE_URL = "https://newsapi.org/v2";
 
   const categories = [
@@ -68,7 +69,7 @@ const TechNews = () => {
       // Debug logging
       console.log("API_KEY available:", !!API_KEY);
       console.log("Environment check:", import.meta.env.MODE);
-      
+
       if (!API_KEY) {
         console.error("NewsAPI key is not available");
         setArticles([]);
@@ -80,9 +81,9 @@ const TechNews = () => {
       const url = `${BASE_URL}/everything?q=${encodeURIComponent(
         query
       )}&language=en&sortBy=publishedAt&pageSize=20&apiKey=${API_KEY}`;
-      
-      console.log("Fetching from:", url.replace(API_KEY, '[API_KEY]'));
-      
+
+      console.log("Fetching from:", url.replace(API_KEY, "[API_KEY]"));
+
       const response = await fetch(url);
 
       if (!response.ok) {
@@ -91,7 +92,12 @@ const TechNews = () => {
       }
 
       const data = await response.json();
-      console.log("API Response:", data.status, "Articles count:", data.articles?.length || 0);
+      console.log(
+        "API Response:",
+        data.status,
+        "Articles count:",
+        data.articles?.length || 0
+      );
 
       if (data.status === "ok" && data.articles) {
         const formattedArticles: NewsArticle[] = data.articles
@@ -138,9 +144,9 @@ const TechNews = () => {
       console.error("Error fetching news:", error);
       // Check if it's a network error or API key issue
       if (error instanceof Error) {
-        if (error.message.includes('401')) {
+        if (error.message.includes("401")) {
           console.error("API Key authentication failed");
-        } else if (error.message.includes('429')) {
+        } else if (error.message.includes("429")) {
           console.error("API rate limit exceeded");
         }
       }

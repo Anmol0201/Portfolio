@@ -5,8 +5,18 @@ import { useInView } from "react-intersection-observer";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Mail,
-  Phone,
-  MapPin,
+  Pho      {/* Profile Card */}
+      <motion.div
+        className={`${
+          isMobile
+            ? "relative w-full bg-card/95 border border-border rounded-xl p-4 shadow-lg mx-3 mt-20 mb-6"
+            : "fixed top-32 left-6 w-80 bg-card/95 backdrop-blur-sm border border-border rounded-xl p-6 shadow-2xl"
+        } z-40`}
+        initial={{ x: isMobile ? 0 : -100, opacity: 0, y: isMobile ? 20 : 0 }}
+        animate={{ x: 0, opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        whileHover={{ scale: isMobile ? 1 : 1.02 }}
+      >n,
   Calendar,
   Github,
   Linkedin,
@@ -276,7 +286,7 @@ const Portfolio = () => {
         </div>
       </nav>
 
-      {/* Profile Card - Completely Redesigned for Mobile */}
+      {/* Profile Card */}
       <motion.div
         className={`${
           isMobile
@@ -364,19 +374,15 @@ const Portfolio = () => {
                   <Linkedin className="w-4 h-4" />
                 </a>
               </div>
-
+              
               {/* Location & Education Row */}
               <div className="grid grid-cols-2 gap-2 text-[10px]">
                 <div className="text-center">
-                  <p className="text-muted-foreground uppercase tracking-wider">
-                    LOCATION
-                  </p>
+                  <p className="text-muted-foreground uppercase tracking-wider">LOCATION</p>
                   <p className="text-foreground font-medium">GWALIOR, INDIA</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-muted-foreground uppercase tracking-wider">
-                    EDUCATION
-                  </p>
+                  <p className="text-muted-foreground uppercase tracking-wider">EDUCATION</p>
                   <p className="text-foreground font-medium">BTECH IT</p>
                 </div>
               </div>
@@ -489,8 +495,12 @@ const Portfolio = () => {
         </div>
       </motion.div>
 
-      {/* Main Content - Now flows naturally on mobile */}
-      <div className={`min-h-screen ${isMobile ? "p-3 pb-24" : "p-8 pl-96"}`}>
+      {/* Main Content */}
+      <div
+        className={`min-h-screen ${
+          isMobile ? "p-3 pb-24" : "p-8 pl-96"
+        }`}
+      >
         <div className="max-w-7xl mx-auto">
           {activeSection === "about" && (
             <AnimatedSection
@@ -502,7 +512,7 @@ const Portfolio = () => {
               <div>
                 <motion.h2
                   className={`${
-                    isMobile ? "text-xl" : "text-3xl"
+                    isMobile ? "text-2xl" : "text-3xl"
                   } font-bold text-foreground mb-6 tracking-wide glow-text`}
                   initial={{ opacity: 0, x: -50 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -553,50 +563,28 @@ const Portfolio = () => {
               </div>
 
               <div>
-                <h3
-                  className={`${
-                    isMobile ? "text-lg" : "text-xl"
-                  } font-bold text-foreground mb-8 tracking-wide glow-text`}
-                >
+                <h3 className="text-xl font-bold text-foreground mb-8 tracking-wide glow-text">
                   WHAT_I_DO
                 </h3>
-                <div
-                  className={`grid ${
-                    isMobile ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"
-                  } gap-6`}
-                >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {services.map((service, index) => (
                     <div key={index} className="nothing-card group">
                       <div className="flex items-start gap-4">
-                        <div
-                          className={`${
-                            isMobile ? "w-10 h-10" : "w-12 h-12"
-                          } bg-secondary rounded border border-border flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-accent-foreground transition-all duration-300`}
-                        >
+                        <div className="w-12 h-12 bg-secondary rounded border border-border flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-accent-foreground transition-all duration-300">
                           {service.icon}
                         </div>
                         <div className="flex-1">
-                          <h4
-                            className={`${
-                              isMobile ? "text-xs" : "text-sm"
-                            } font-bold text-foreground mb-2 tracking-wide uppercase`}
-                          >
+                          <h4 className="text-sm font-bold text-foreground mb-2 tracking-wide uppercase">
                             {service.title}
                           </h4>
-                          <p
-                            className={`text-muted-foreground ${
-                              isMobile ? "text-[10px]" : "text-xs"
-                            } leading-relaxed mb-3`}
-                          >
+                          <p className="text-muted-foreground text-xs leading-relaxed mb-3">
                             {service.description}
                           </p>
                           <div className="flex flex-wrap gap-1">
                             {service.tech.map((tech, techIndex) => (
                               <span
                                 key={techIndex}
-                                className={`${
-                                  isMobile ? "text-[8px]" : "text-[10px]"
-                                } px-2 py-1 bg-secondary rounded text-muted-foreground border border-border`}
+                                className="text-[10px] px-2 py-1 bg-secondary rounded text-muted-foreground border border-border"
                               >
                                 {tech}
                               </span>
@@ -617,11 +605,7 @@ const Portfolio = () => {
               className="max-w-4xl mx-auto space-y-12 slide-in-up"
             >
               <div>
-                <h2
-                  className={`${
-                    isMobile ? "text-xl" : "text-3xl"
-                  } font-bold text-foreground mb-6 tracking-wide glow-text`}
-                >
+                <h2 className="text-3xl font-bold text-foreground mb-6 tracking-wide glow-text">
                   RESUME
                 </h2>
                 <div className="w-12 h-0.5 bg-accent mb-8"></div>
@@ -631,38 +615,20 @@ const Portfolio = () => {
               <div className="nothing-card">
                 <div className="flex items-center gap-3 mb-6">
                   <GraduationCap className="w-5 h-5 text-accent" />
-                  <h3
-                    className={`${
-                      isMobile ? "text-base" : "text-lg"
-                    } font-bold text-foreground tracking-wide`}
-                  >
+                  <h3 className="text-lg font-bold text-foreground tracking-wide">
                     EDUCATION
                   </h3>
                 </div>
                 <div className="space-y-4">
                   <div className="border-l-2 border-accent pl-4">
-                    <h4
-                      className={`${
-                        isMobile ? "text-xs" : "text-sm"
-                      } font-bold text-foreground tracking-wide`}
-                    >
+                    <h4 className="text-sm font-bold text-foreground tracking-wide">
                       BACHELOR OF TECHNOLOGY IN INFORMATION TECHNOLOGY
                     </h4>
-                    <p
-                      className={`text-accent ${
-                        isMobile ? "text-[10px]" : "text-xs"
-                      } font-medium tracking-wide`}
-                    >
+                    <p className="text-accent text-xs font-medium tracking-wide">
                       MADHAV INSTITUTE OF TECHNOLOGY AND SCIENCE (MITS-DU),
                       GWALIOR
                     </p>
-                    <p
-                      className={`text-muted-foreground ${
-                        isMobile ? "text-[10px]" : "text-xs"
-                      }`}
-                    >
-                      2022 - 2026
-                    </p>
+                    <p className="text-muted-foreground text-xs">2022 - 2026</p>
                   </div>
                 </div>
               </div>
@@ -671,42 +637,22 @@ const Portfolio = () => {
               <div className="nothing-card">
                 <div className="flex items-center gap-3 mb-6">
                   <Briefcase className="w-5 h-5 text-accent" />
-                  <h3
-                    className={`${
-                      isMobile ? "text-base" : "text-lg"
-                    } font-bold text-foreground tracking-wide`}
-                  >
+                  <h3 className="text-lg font-bold text-foreground tracking-wide">
                     EXPERIENCE
                   </h3>
                 </div>
                 <div className="space-y-4">
                   <div className="border-l-2 border-accent pl-4">
-                    <h4
-                      className={`${
-                        isMobile ? "text-xs" : "text-sm"
-                      } font-bold text-foreground tracking-wide`}
-                    >
+                    <h4 className="text-sm font-bold text-foreground tracking-wide">
                       SOFTWARE DEVELOPMENT INTERN
                     </h4>
-                    <p
-                      className={`text-accent ${
-                        isMobile ? "text-[10px]" : "text-xs"
-                      } font-medium tracking-wide`}
-                    >
+                    <p className="text-accent text-xs font-medium tracking-wide">
                       RISHISHWAR INDUSTRIES PVT LTD.
                     </p>
-                    <p
-                      className={`text-muted-foreground ${
-                        isMobile ? "text-[10px]" : "text-xs"
-                      } mb-3`}
-                    >
+                    <p className="text-muted-foreground text-xs mb-3">
                       MAY 2025 - JULY 2025
                     </p>
-                    <p
-                      className={`text-muted-foreground ${
-                        isMobile ? "text-[10px]" : "text-xs"
-                      } leading-relaxed`}
-                    >
+                    <p className="text-muted-foreground text-xs leading-relaxed">
                       CONTRIBUTED TO A DYNAMIC DEVELOPMENT TEAM BY BUILDING AND
                       TESTING REST APIS, STRENGTHENING BACKEND INFRASTRUCTURE.
                       GAINED EXPOSURE TO APPLIED AI AND MACHINE LEARNING BY
@@ -730,11 +676,7 @@ const Portfolio = () => {
                 </div>
                 <div className="space-y-6">
                   <div>
-                    <h5
-                      className={`${
-                        isMobile ? "text-[10px]" : "text-xs"
-                      } font-bold text-foreground mb-4 uppercase tracking-wider flex items-center gap-2`}
-                    >
+                    <h5 className="text-xs font-bold text-foreground mb-4 uppercase tracking-wider flex items-center gap-2">
                       <Star className="w-3 h-3 text-accent" />
                       PROGRAMMING_LANGUAGES
                     </h5>
@@ -756,11 +698,7 @@ const Portfolio = () => {
                   </div>
                   <div className="w-full h-px bg-border"></div>
                   <div>
-                    <h5
-                      className={`${
-                        isMobile ? "text-[10px]" : "text-xs"
-                      } font-bold text-foreground mb-4 uppercase tracking-wider flex items-center gap-2`}
-                    >
+                    <h5 className="text-xs font-bold text-foreground mb-4 uppercase tracking-wider flex items-center gap-2">
                       <Star className="w-3 h-3 text-accent" />
                       WEB_DEVELOPMENT
                     </h5>
@@ -782,11 +720,7 @@ const Portfolio = () => {
                   </div>
                   <div className="w-full h-px bg-border"></div>
                   <div>
-                    <h5
-                      className={`${
-                        isMobile ? "text-[10px]" : "text-xs"
-                      } font-bold text-foreground mb-4 uppercase tracking-wider flex items-center gap-2`}
-                    >
+                    <h5 className="text-xs font-bold text-foreground mb-4 uppercase tracking-wider flex items-center gap-2">
                       <Star className="w-3 h-3 text-accent" />
                       DATA_SCIENCE_&_AI
                     </h5>
@@ -808,11 +742,7 @@ const Portfolio = () => {
                   </div>
                   <div className="w-full h-px bg-border"></div>
                   <div>
-                    <h5
-                      className={`${
-                        isMobile ? "text-[10px]" : "text-xs"
-                      } font-bold text-foreground mb-4 uppercase tracking-wider flex items-center gap-2`}
-                    >
+                    <h5 className="text-xs font-bold text-foreground mb-4 uppercase tracking-wider flex items-center gap-2">
                       <Star className="w-3 h-3 text-accent" />
                       CORE_CONCEPTS
                     </h5>
@@ -839,11 +769,7 @@ const Portfolio = () => {
               <div className="nothing-card">
                 <div className="flex items-center gap-3 mb-6">
                   <Award className="w-5 h-5 text-accent" />
-                  <h3
-                    className={`${
-                      isMobile ? "text-base" : "text-lg"
-                    } font-bold text-foreground tracking-wide`}
-                  >
+                  <h3 className="text-lg font-bold text-foreground tracking-wide">
                     ACHIEVEMENTS_&_CERTIFICATIONS
                   </h3>
                 </div>
@@ -851,11 +777,7 @@ const Portfolio = () => {
                   {achievements.map((achievement, index) => (
                     <div key={index} className="flex items-start gap-3">
                       <ChevronRight className="w-3 h-3 text-accent mt-1 flex-shrink-0" />
-                      <p
-                        className={`text-muted-foreground ${
-                          isMobile ? "text-[10px]" : "text-xs"
-                        } leading-relaxed`}
-                      >
+                      <p className="text-muted-foreground text-xs leading-relaxed">
                         {achievement}
                       </p>
                     </div>
@@ -875,7 +797,7 @@ const Portfolio = () => {
               <div>
                 <motion.h2
                   className={`${
-                    isMobile ? "text-xl" : "text-3xl"
+                    isMobile ? "text-2xl" : "text-3xl"
                   } font-bold text-foreground mb-6 tracking-wide glow-text`}
                   initial={{ opacity: 0, x: -50 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -891,11 +813,7 @@ const Portfolio = () => {
                 ></motion.div>
               </div>
 
-              <div
-                className={`grid ${
-                  isMobile ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"
-                } gap-6`}
-              >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {projects.map((project, index) => (
                   <ProjectCard key={index} project={project} index={index} />
                 ))}
@@ -912,7 +830,7 @@ const Portfolio = () => {
               <div>
                 <h2
                   className={`${
-                    isMobile ? "text-xl" : "text-3xl"
+                    isMobile ? "text-2xl" : "text-3xl"
                   } font-bold text-foreground mb-6 tracking-wide`}
                 >
                   CONTACT
@@ -923,43 +841,25 @@ const Portfolio = () => {
               <div className="nothing-card relative z-10">
                 <div className="text-center space-y-8 pointer-events-auto">
                   <div>
-                    <h3
-                      className={`${
-                        isMobile ? "text-base" : "text-xl"
-                      } font-bold text-foreground mb-4 tracking-wide`}
-                    >
+                    <h3 className="text-xl font-bold text-foreground mb-4 tracking-wide">
                       LET'S_WORK_TOGETHER
                     </h3>
-                    <p
-                      className={`text-muted-foreground ${
-                        isMobile ? "text-xs" : "text-sm"
-                      } leading-relaxed max-w-2xl mx-auto`}
-                    >
+                    <p className="text-muted-foreground text-sm leading-relaxed max-w-2xl mx-auto">
                       I'M ALWAYS INTERESTED IN NEW OPPORTUNITIES AND EXCITING
                       PROJECTS. WHETHER YOU WANT TO DISCUSS A POTENTIAL
                       COLLABORATION OR JUST SAY HELLO, FEEL FREE TO REACH OUT!
                     </p>
                   </div>
 
-                  <div
-                    className={`grid ${
-                      isMobile ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"
-                    } gap-6 relative z-20`}
-                  >
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-20">
                     <div className="flex flex-col items-center p-6 bg-secondary rounded border border-border relative">
                       <Mail className="w-8 h-8 text-accent mb-4" />
-                      <h4
-                        className={`font-bold text-foreground mb-2 ${
-                          isMobile ? "text-xs" : "text-sm"
-                        } tracking-wide`}
-                      >
+                      <h4 className="font-bold text-foreground mb-2 text-sm tracking-wide">
                         EMAIL
                       </h4>
                       <a
                         href="mailto:tiwarianmol173@gmail.com"
-                        className={`text-muted-foreground hover:text-accent transition-colors ${
-                          isMobile ? "text-[10px]" : "text-xs"
-                        } cursor-pointer relative z-30 pointer-events-auto inline-block`}
+                        className="text-muted-foreground hover:text-accent transition-colors text-xs cursor-pointer relative z-30 pointer-events-auto inline-block"
                         onClick={(e) => {
                           e.stopPropagation();
                           window.location.href =
@@ -971,18 +871,12 @@ const Portfolio = () => {
                     </div>
                     <div className="flex flex-col items-center p-6 bg-secondary rounded border border-border relative">
                       <Phone className="w-8 h-8 text-accent mb-4" />
-                      <h4
-                        className={`font-bold text-foreground mb-2 ${
-                          isMobile ? "text-xs" : "text-sm"
-                        } tracking-wide`}
-                      >
+                      <h4 className="font-bold text-foreground mb-2 text-sm tracking-wide">
                         PHONE
                       </h4>
                       <a
                         href="tel:+918103107867"
-                        className={`text-muted-foreground hover:text-accent transition-colors ${
-                          isMobile ? "text-[10px]" : "text-xs"
-                        } cursor-pointer relative z-30 pointer-events-auto inline-block`}
+                        className="text-muted-foreground hover:text-accent transition-colors text-xs cursor-pointer relative z-30 pointer-events-auto inline-block"
                         onClick={(e) => {
                           e.stopPropagation();
                           window.location.href = "tel:+918103107867";

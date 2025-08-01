@@ -24,11 +24,11 @@ const AnimatedSection = ({
     <motion.div
       ref={ref}
       id={id}
-      initial={{ opacity: 0, y: 50 }}
-      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
       transition={{
-        duration: 0.8,
-        delay,
+        duration: 0.4,
+        delay: delay * 0.5,
         ease: "easeOut",
       }}
       className={className}

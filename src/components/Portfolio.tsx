@@ -25,6 +25,7 @@ import {
   Moon,
   Download,
   Star,
+  TrendingUp,
 } from "lucide-react";
 import avatarImage from "@/assets/avatar.png";
 import AnimatedSkillBar from "@/components/ui/AnimatedSkillBar";
@@ -33,30 +34,102 @@ import ParticleSystem from "@/components/ui/ParticleSystem";
 import CursorTrail from "@/components/ui/CursorTrail";
 import ParticleHover from "@/components/ui/ParticleHover";
 import AnimatedSection from "@/components/ui/AnimatedSection";
+import Logo from "@/components/ui/Logo";
 import FloatingElement from "@/components/ui/FloatingElement";
 import ChatAssistant from "@/components/ui/ChatAssistant";
-import Logo from "@/components/ui/Logo";
+import TechNews from "@/components/ui/TechNews";
 
 const Portfolio = () => {
   const [activeSection, setActiveSection] = useState("about");
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [showLanding, setShowLanding] = useState(true);
   const isMobile = useIsMobile();
 
   useEffect(() => {
     setMounted(true);
+
+    // Hide landing animation after it completes (3.5 seconds to ensure smooth transition)
+    const timer = setTimeout(() => {
+      setShowLanding(false);
+    }, 3500);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const scrollToSection = (sectionId: string) => {
+    console.log(`Navigating to section: ${sectionId}`);
+
+    // First, update the active section for immediate visual feedback
     setActiveSection(sectionId);
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
+
+    // Use requestAnimationFrame for smoother execution
+    requestAnimationFrame(() => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        // Calculate offset for better positioning - account for header height properly
+        const headerOffset = isMobile ? 100 : 120; // Increased offset for mobile and desktop
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition =
+          elementPosition + window.pageYOffset - headerOffset;
+
+        // Smooth scroll with custom behavior
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth",
+        });
+
+        // Add subtle visual feedback
+        element.style.transition = "all 0.4s ease-out";
+        element.style.transform = "translateY(-2px)";
+
+        setTimeout(() => {
+          element.style.transform = "translateY(0)";
+        }, 400);
+      }
+    });
   };
+
+  // Add scroll listener to update active section based on scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ["about", "resume", "portfolio", "news", "contact"];
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const headerHeight = isMobile ? 100 : 120; // Match the header offset
+
+      // Check which section is in view
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          // Section is considered active if it's in the top 30% of the viewport (accounting for header)
+          if (
+            rect.top <= windowHeight * 0.3 + headerHeight &&
+            rect.bottom >= windowHeight * 0.1
+          ) {
+            setActiveSection(section);
+            break;
+          }
+        }
+      }
+    };
+
+    // Throttle scroll events for better performance
+    let ticking = false;
+    const throttledHandleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", throttledHandleScroll);
+    return () => window.removeEventListener("scroll", throttledHandleScroll);
+  }, [isMobile]);
 
   const skills = {
     languages: [
@@ -212,77 +285,414 @@ const Portfolio = () => {
       label: "PROJECTS",
       icon: <Briefcase className="w-4 h-4" />,
     },
+    {
+      id: "news",
+      label: "AI NEWS",
+      icon: <TrendingUp className="w-4 h-4" />,
+    },
     { id: "contact", label: "CONTACT", icon: <Mail className="w-4 h-4" /> },
   ];
 
   return (
     <div className="min-h-screen bg-background font-mono">
-      {/* Logo */}
-      <motion.div
-        className="fixed top-6 left-6 z-50"
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-        onClick={() => scrollToSection("about")}
-      >
-        <Logo
-          size="md"
-          variant="full"
-          className="cursor-pointer hover:scale-105 transition-transform duration-300"
-        />
-      </motion.div>
-
-      {/* Navigation */}
-      <nav
-        className={`fixed z-50 ${
-          isMobile ? "bottom-4 left-4 right-4" : "top-6 right-6"
-        }`}
-      >
-        <div className="nothing-nav rounded-lg p-1 pulse-glow">
-          <div className={`flex gap-1 ${isMobile ? "justify-center" : ""}`}>
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => scrollToSection(item.id)}
+      {/* DevCraft Studio Landing Animation */}
+      <AnimatePresence>
+        {showLanding && (
+          <motion.div
+            className="fixed inset-0 z-[100] bg-background flex items-center justify-center overflow-hidden"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+          >
+            <div
+              className={`text-center ${
+                isMobile ? "px-4 w-full max-w-sm" : "space-y-8"
+              }`}
+            >
+              {/* Creator Name Animation */}
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
                 className={`${
-                  isMobile ? "px-2 py-2" : "px-4 py-2"
-                } rounded-md text-xs font-medium transition-all duration-300 flex items-center gap-2 transform hover:scale-105 ${
-                  activeSection === item.id
-                    ? "bg-primary text-primary-foreground glow-text"
-                    : "text-muted-foreground hover:text-foreground hover:bg-secondary bright-hover"
+                  isMobile ? "text-sm mb-6" : "text-2xl mb-4"
+                } font-light tracking-[0.2em] text-muted-foreground`}
+              >
+                ANMOL TIWARI
+              </motion.div>
+
+              {/* Main Logo Animation */}
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+                className={`relative ${isMobile ? "mb-6" : ""}`}
+              >
+                <motion.div
+                  className={`${
+                    isMobile ? "text-3xl" : "text-6xl md:text-8xl"
+                  } font-bold tracking-wider bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent leading-tight`}
+                  initial={{ backgroundPosition: "0%" }}
+                  animate={{ backgroundPosition: "200%" }}
+                  transition={{
+                    duration: 2,
+                    repeat: 1,
+                    ease: "linear",
+                    delay: 0.4,
+                  }}
+                  style={{
+                    backgroundSize: "200% 100%",
+                  }}
+                >
+                  DEVCRAFT
+                </motion.div>
+
+                {/* Glowing underline */}
+                <motion.div
+                  className={`${
+                    isMobile ? "h-0.5 mt-2" : "h-1 mt-4"
+                  } bg-gradient-to-r from-transparent via-accent to-transparent mx-auto`}
+                  initial={{ width: 0 }}
+                  animate={{ width: "100%" }}
+                  transition={{ duration: 1, delay: 0.6, ease: "easeOut" }}
+                />
+              </motion.div>
+
+              {/* Studio Text */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.8 }}
+                className={`${
+                  isMobile ? "text-base mb-4" : "text-2xl md:text-3xl"
+                } font-light tracking-[0.3em] text-muted-foreground`}
+              >
+                STUDIO
+              </motion.div>
+
+              {/* Tagline */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 1.2 }}
+                className={`${
+                  isMobile ? "text-[10px] mb-8" : "text-sm"
+                } text-muted-foreground/70 tracking-wider`}
+              >
+                CRAFTING DIGITAL EXPERIENCES
+              </motion.div>
+
+              {/* Skip Button */}
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.8 }}
+                onClick={() => setShowLanding(false)}
+                className={`absolute ${
+                  isMobile ? "top-4 right-4 text-xs" : "top-6 right-6 text-sm"
+                } text-muted-foreground hover:text-accent transition-colors tracking-wider flex items-center gap-2 z-10`}
+              >
+                SKIP
+                <ChevronRight
+                  className={`${isMobile ? "w-3 h-3" : "w-4 h-4"}`}
+                />
+              </motion.button>
+
+              {/* Particle Effects */}
+              <motion.div
+                className="absolute inset-0 pointer-events-none"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+              >
+                {[...Array(isMobile ? 10 : 20)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className="absolute w-1 h-1 bg-accent rounded-full"
+                    initial={{
+                      x:
+                        Math.random() *
+                        (isMobile
+                          ? window.innerWidth * 0.8
+                          : window.innerWidth),
+                      y:
+                        Math.random() *
+                        (isMobile
+                          ? window.innerHeight * 0.8
+                          : window.innerHeight),
+                      scale: 0,
+                    }}
+                    animate={{
+                      scale: [0, 1, 0],
+                      opacity: [0, 1, 0],
+                    }}
+                    transition={{
+                      duration: 2,
+                      delay: Math.random() * 1,
+                      repeat: Infinity,
+                      repeatDelay: Math.random() * 2,
+                    }}
+                  />
+                ))}
+              </motion.div>
+
+              {/* Loading indicator */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.8 }}
+                className={`flex items-center justify-center gap-2 text-muted-foreground tracking-wider ${
+                  isMobile ? "text-[10px] mt-6" : "text-sm"
                 }`}
               >
-                {item.icon}
-                {!isMobile && item.label}
-              </button>
-            ))}
-            {/* Theme Toggle */}
-            {mounted && (
-              <button
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className={`${
-                  isMobile ? "px-2 py-2" : "px-3 py-2"
-                } rounded-md text-xs font-medium transition-all duration-300 flex items-center gap-2 text-muted-foreground hover:text-foreground hover:bg-secondary bright-hover transform hover:scale-105`}
-                title="Toggle theme"
+                <motion.div
+                  className={`${
+                    isMobile ? "w-1.5 h-1.5" : "w-2 h-2"
+                  } bg-accent rounded-full`}
+                  animate={{ scale: [1, 1.5, 1] }}
+                  transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
+                />
+                <motion.div
+                  className={`${
+                    isMobile ? "w-1.5 h-1.5" : "w-2 h-2"
+                  } bg-accent rounded-full`}
+                  animate={{ scale: [1, 1.5, 1] }}
+                  transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }}
+                />
+                <motion.div
+                  className={`${
+                    isMobile ? "w-1.5 h-1.5" : "w-2 h-2"
+                  } bg-accent rounded-full`}
+                  animate={{ scale: [1, 1.5, 1] }}
+                  transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }}
+                />
+                <span className={`${isMobile ? "ml-2" : "ml-3"}`}>
+                  ENTERING PORTFOLIO
+                </span>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Add global smooth scroll */}
+      <style>{`
+        html {
+          scroll-behavior: smooth;
+        }
+        * {
+          scroll-behavior: smooth;
+        }
+      `}</style>
+
+      {/* Header with DevCraft Logo */}
+      <motion.header
+        className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-2xl border-b shadow-2xl ${
+          isMobile ? "h-16" : "h-20"
+        }`}
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.2 }}
+        style={{
+          background:
+            theme === "dark"
+              ? "linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.3) 100%)"
+              : "linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.3) 100%)",
+          backdropFilter: "blur(24px) saturate(1.2)",
+          borderImage:
+            theme === "dark"
+              ? "linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent) 1"
+              : "linear-gradient(90deg, transparent, rgba(0,0,0,0.1), transparent) 1",
+          borderBottom:
+            theme === "dark"
+              ? "1px solid rgba(255,255,255,0.1)"
+              : "1px solid rgba(0,0,0,0.1)",
+          boxShadow:
+            theme === "dark"
+              ? "0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 1px 0 rgba(255, 255, 255, 0.05)"
+              : "0 8px 32px 0 rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8)",
+        }}
+      >
+        <div className="flex items-center justify-between h-full px-6">
+          {/* DevCraft Studio Logo */}
+          <motion.div
+            onClick={() => scrollToSection("about")}
+            className="cursor-pointer hover:scale-105 transition-transform duration-300"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Logo
+              size={isMobile ? "sm" : "md"}
+              variant="full"
+              animated={false}
+              className="hover:scale-105 transition-transform duration-300"
+            />
+          </motion.div>
+
+          {/* Desktop Navigation */}
+          {!isMobile && (
+            <nav className="flex items-center">
+              <div
+                className="backdrop-blur-2xl rounded-xl px-6 py-3 border shadow-xl"
+                style={{
+                  background:
+                    theme === "dark"
+                      ? "rgba(0,0,0,0.2)"
+                      : "rgba(255,255,255,0.2)",
+                  borderColor:
+                    theme === "dark"
+                      ? "rgba(255,255,255,0.1)"
+                      : "rgba(0,0,0,0.1)",
+                }}
               >
-                {theme === "dark" ? (
-                  <Sun className="w-4 h-4" />
-                ) : (
-                  <Moon className="w-4 h-4" />
-                )}
-              </button>
-            )}
-          </div>
+                <div className="flex gap-6">
+                  {navItems.map((item) => (
+                    <motion.button
+                      key={item.id}
+                      onClick={() => scrollToSection(item.id)}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                      className={`relative px-4 py-2 text-xs font-medium transition-all duration-300 flex items-center gap-2 ${
+                        activeSection === item.id
+                          ? theme === "dark"
+                            ? "text-white"
+                            : "text-black"
+                          : theme === "dark"
+                          ? "text-white/70 hover:text-white"
+                          : "text-black/70 hover:text-black"
+                      }`}
+                    >
+                      {/* Simple underline for active state */}
+                      {activeSection === item.id && (
+                        <motion.div
+                          layoutId="activeTab"
+                          className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent rounded-full"
+                          initial={false}
+                          transition={{
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 30,
+                          }}
+                        />
+                      )}
+
+                      <span className="flex items-center gap-2">
+                        {item.icon}
+                        <span className="tracking-wide">{item.label}</span>
+                      </span>
+                    </motion.button>
+                  ))}
+
+                  {/* Theme Toggle */}
+                  {mounted && (
+                    <motion.button
+                      onClick={() =>
+                        setTheme(theme === "dark" ? "light" : "dark")
+                      }
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className={`px-3 py-2 text-xs font-medium transition-all duration-300 flex items-center ${
+                        theme === "dark"
+                          ? "text-white/70 hover:text-white"
+                          : "text-black/70 hover:text-black"
+                      }`}
+                      title="Toggle theme"
+                    >
+                      {theme === "dark" ? (
+                        <Sun className="w-4 h-4" />
+                      ) : (
+                        <Moon className="w-4 h-4" />
+                      )}
+                    </motion.button>
+                  )}
+                </div>
+              </div>
+            </nav>
+          )}
         </div>
-      </nav>
+      </motion.header>
+
+      {/* Mobile Navigation - Bottom */}
+      {isMobile && (
+        <nav className="fixed bottom-4 left-4 right-4 z-50">
+          <div
+            className="backdrop-blur-2xl rounded-xl px-4 py-3 border shadow-xl"
+            style={{
+              background:
+                theme === "dark" ? "rgba(0,0,0,0.2)" : "rgba(255,255,255,0.2)",
+              borderColor:
+                theme === "dark" ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)",
+            }}
+          >
+            <div className="flex gap-4 justify-center">
+              {navItems.map((item) => (
+                <motion.button
+                  key={item.id}
+                  onClick={() => scrollToSection(item.id)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  className={`relative px-3 py-2 text-xs font-medium transition-all duration-300 flex items-center ${
+                    activeSection === item.id
+                      ? theme === "dark"
+                        ? "text-white"
+                        : "text-black"
+                      : theme === "dark"
+                      ? "text-white/70 hover:text-white"
+                      : "text-black/70 hover:text-black"
+                  }`}
+                >
+                  {/* Simple underline for active state */}
+                  {activeSection === item.id && (
+                    <motion.div
+                      layoutId="activeTabMobile"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent rounded-full"
+                      initial={false}
+                      transition={{
+                        type: "spring",
+                        stiffness: 500,
+                        damping: 30,
+                      }}
+                    />
+                  )}
+
+                  <span className="flex items-center">{item.icon}</span>
+                </motion.button>
+              ))}
+
+              {/* Theme Toggle */}
+              {mounted && (
+                <motion.button
+                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`px-3 py-2 text-xs font-medium transition-all duration-300 flex items-center ${
+                    theme === "dark"
+                      ? "text-white/70 hover:text-white"
+                      : "text-black/70 hover:text-black"
+                  }`}
+                  title="Toggle theme"
+                >
+                  {theme === "dark" ? (
+                    <Sun className="w-4 h-4" />
+                  ) : (
+                    <Moon className="w-4 h-4" />
+                  )}
+                </motion.button>
+              )}
+            </div>
+          </div>
+        </nav>
+      )}
 
       {/* Profile Card - Completely Redesigned for Mobile */}
       <motion.div
         className={`${
           isMobile
-            ? "relative w-full bg-card/95 border border-border rounded-xl p-4 shadow-lg mx-3 mt-20 mb-6"
-            : "fixed top-32 left-6 w-80 bg-card/95 backdrop-blur-sm border border-border rounded-xl p-6 shadow-2xl"
-        } z-40`}
+            ? "relative w-full bg-card/95 border border-border rounded-xl p-4 shadow-lg mx-3 mb-6"
+            : "fixed left-6 w-80 bg-card/95 backdrop-blur-sm border border-border rounded-xl p-6 shadow-2xl"
+        } z-40 ${isMobile ? "mt-20" : "top-24"}`}
         initial={{ x: isMobile ? 0 : -100, opacity: 0, y: isMobile ? 20 : 0 }}
         animate={{ x: 0, opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
@@ -490,7 +900,11 @@ const Portfolio = () => {
       </motion.div>
 
       {/* Main Content - Now flows naturally on mobile */}
-      <div className={`min-h-screen ${isMobile ? "p-3 pb-24" : "p-8 pl-96"}`}>
+      <div
+        className={`min-h-screen ${
+          isMobile ? "p-3 pb-24 pt-4" : "p-8 pl-96 pt-24"
+        }`}
+      >
         <div className="max-w-7xl mx-auto">
           {activeSection === "about" && (
             <AnimatedSection
@@ -504,9 +918,9 @@ const Portfolio = () => {
                   className={`${
                     isMobile ? "text-xl" : "text-3xl"
                   } font-bold text-foreground mb-6 tracking-wide glow-text`}
-                  initial={{ opacity: 0, x: -50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
                 >
                   ABOUT_ME
                 </motion.h2>
@@ -514,15 +928,15 @@ const Portfolio = () => {
                   className="w-12 h-0.5 bg-accent mb-8"
                   initial={{ width: 0 }}
                   animate={{ width: 48 }}
-                  transition={{ duration: 0.8, delay: 0.2 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
                 ></motion.div>
                 <motion.div
                   className={`space-y-6 ${
                     isMobile ? "text-xs" : "text-sm"
                   } leading-relaxed`}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.4 }}
+                  transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
                 >
                   <p className="text-muted-foreground bright-hover">
                     I'M A PASSIONATE SOFTWARE DEVELOPER AND BTECH IT STUDENT
@@ -717,7 +1131,7 @@ const Portfolio = () => {
               </div>
 
               {/* Skills */}
-              <AnimatedSection className="nothing-card" delay={0.4}>
+              <AnimatedSection className="nothing-card">
                 <div className="flex items-center gap-3 mb-6">
                   <Code className="w-5 h-5 text-accent" />
                   <h3
@@ -877,9 +1291,9 @@ const Portfolio = () => {
                   className={`${
                     isMobile ? "text-xl" : "text-3xl"
                   } font-bold text-foreground mb-6 tracking-wide glow-text`}
-                  initial={{ opacity: 0, x: -50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
                 >
                   PROJECTS
                 </motion.h2>
@@ -887,7 +1301,7 @@ const Portfolio = () => {
                   className="w-12 h-0.5 bg-accent mb-8"
                   initial={{ width: 0 }}
                   animate={{ width: 48 }}
-                  transition={{ duration: 0.8, delay: 0.2 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
                 ></motion.div>
               </div>
 
@@ -900,6 +1314,36 @@ const Portfolio = () => {
                   <ProjectCard key={index} project={project} index={index} />
                 ))}
               </div>
+            </AnimatedSection>
+          )}
+
+          {activeSection === "news" && (
+            <AnimatedSection
+              id="news"
+              className={`${
+                isMobile ? "max-w-full" : "max-w-4xl"
+              } mx-auto space-y-12`}
+            >
+              <div>
+                <motion.h2
+                  className={`${
+                    isMobile ? "text-xl" : "text-3xl"
+                  } font-bold text-foreground mb-6 tracking-wide glow-text`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                >
+                  AI_NEWS
+                </motion.h2>
+                <motion.div
+                  className="w-12 h-0.5 bg-accent mb-8"
+                  initial={{ width: 0 }}
+                  animate={{ width: 48 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                ></motion.div>
+              </div>
+
+              <TechNews />
             </AnimatedSection>
           )}
 
@@ -1023,7 +1467,18 @@ const Portfolio = () => {
       <CursorTrail />
 
       {/* AI Chat Assistant */}
-      <ChatAssistant />
+      <AnimatePresence>
+        {!showLanding && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <ChatAssistant />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

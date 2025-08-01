@@ -6,6 +6,15 @@
 
 /* Nothing OS inspired design system with dynamic theme support */
 
+/* Global smooth scrolling */
+* {
+  scroll-behavior: smooth;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 @layer base {
   :root {
     /* Dark theme (default Nothing OS) */

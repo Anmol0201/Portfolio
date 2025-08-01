@@ -30,7 +30,7 @@ const TechNews = () => {
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const isMobile = useIsMobile();
 
-  const API_KEY = "5f9500e25cd14e1e9671a93dde5f1ccc";
+  const API_KEY = import.meta.env.VITE_NEWS_API_KEY;
   const BASE_URL = "https://newsapi.org/v2";
 
   const categories = [

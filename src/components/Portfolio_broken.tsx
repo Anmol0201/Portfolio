@@ -122,10 +122,10 @@ const Portfolio = () => {
       title: "AGRO-ADVISOR",
       description:
         "ML-based web application using Streamlit for crop recommendation based on soil and climate parameters.",
-      tech: ["Machine Learning", "Streamlit", "Python", "SVM", "Decision Tree"],
+      tech: ["Machine Learning", "Streamlit", "Python", "Data-Analysis"],
       category: "AI/ML",
-      githubUrl: "https://github.com/Anmol0201/",
-      liveUrl: "#",
+      githubUrl: "https://github.com/Anmol0201/AGRO-ADVISOR",
+      liveUrl: "https://crop-recommendation-system-minor.streamlit.app/",
     },
     {
       title: "TALK-TRACK",
@@ -133,8 +133,8 @@ const Portfolio = () => {
         "Interactive WhatsApp chat analytics dashboard with user activity heatmaps and sentiment analysis.",
       tech: ["Streamlit", "Python", "NLP", "Data Visualization", "Pandas"],
       category: "Data Science",
-      githubUrl: "https://github.com/Anmol0201/",
-      liveUrl: "#",
+      githubUrl: "https://github.com/Anmol0201/TalkTrack",
+      liveUrl: "https://talk-track.vercel.app/",
     },
     {
       title: "CODE-GURU",
